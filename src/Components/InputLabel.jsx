@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function Input({ id, label, value, onChange }) {
+export default function InputLabel({ id, label, value, onChange }) {
   return (
     <>
         <label htmlFor={id}>{label}</label>
