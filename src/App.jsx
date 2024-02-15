@@ -1,180 +1,135 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import './App.css';
+import { useDispatch, useSelector } from "react-redux"
 import InputLabel from './Components/InputLabel';
 import InputModify from './Components/InputModify';
 import Recipes from './Components/Recipes';
+import { addRecipe, updateRecipe, updateModifyIngredient, updateModifyStep, updateModifyTitle, suppressIngredientFromModify, suppressStepFromModify, cancelStepChange, cancelIngredientChange, cancelTitleChange, cleanCurrentModify, updateModifyOfRecipe } from "./State/Reducers/reducers"
 
 function App() {
-
     const [form, setForm] = useState({
       cookingTitle: "",
+      currentIngredient: "",
       ingredients: [],
+      currentStep: "",
       steps: []
     })
 
-    // console.log(form)
+    const dispatch = useDispatch()
 
-    const [currentIngredient, setCurrentIngredient] = useState("")
+    const toModify = useSelector((state) => state.currentModify)
+    console.log(toModify)
 
-    const [currentStep, setCurrentStep] = useState("")
-
-    const [currentModify, setCurrentModify] = useState([]) // currentIndex à envoyer depuis l'enfant changer modifyClicked
-
-    const [recipes, setRecipes] = useState([])
-
-    // const [modifyClicked, setModifyClicked] = useState(false)
+    const recipes = useSelector((state) => state.recipes)
 
     const addIngredient = (ingredient) => {
-      setForm({...form, ingredients: [...form.ingredients, ingredient]})
+        setForm({...form, ingredients: [...form.ingredients, ingredient]})
     }
 
     const addStep = (step) => {
-      setForm({...form, steps: [...form.steps, step]})
+        setForm({...form, steps: [...form.steps, step]})
     }
 
     const handleSubmit = (e, form) => {
         e.preventDefault()
-        setRecipes([...recipes, {recipe: form, clicked: false, modify: form}])
-        // console.log()
+        const newRecipe = {recipe: form, clicked: false, modify: form}
+        dispatch(addRecipe(newRecipe))
+        setForm({
+            cookingTitle: "",
+            currentIngredient: "",
+            ingredients: [],
+            currentStep: "",
+            steps: []
+          })
         console.log(form)
     }
 
-    useEffect(() => {
-      if(!currentModify.length){
-        setCurrentIngredient("")
-        setCurrentStep("")
-        setForm({
-          cookingTitle: "",
-          ingredients: [],
-          steps: []
-        })
-      }
-    }, [recipes,currentModify])
+    const modifyClicked = (e, index) => {
+        e.preventDefault()
+        dispatch(updateRecipe(index))
+        dispatch(cleanCurrentModify())
+    }
 
-    // useEffect(() => {
-    //   if(!currentModify.length){
-    //     setCurrentIngredient("")
-    //     setCurrentStep("")
-    //     setForm({
-    //       cookingTitle: "",
-    //       ingredients: [],
-    //       steps: []
-    //     })
-    //   }
-    // }, [modifyClicked])
-    
+    const cancelModifications = (e, index) => {
+        e.preventDefault()
+        dispatch(updateModifyOfRecipe(index))
+        dispatch(cleanCurrentModify())
+    }
 
     return (
-        <div className="App" 
-        // onClick={() => alert('Bonjour')}
-        >
-            {/* <button onClick={(e) => {alert('Bonjour Stoppé'); e.stopPropagation()}}>Hey</button> */}
+        <div className="App">
+
             <div className="top">
               <h1>Recipes</h1>
               <p>Votre carnet virtuel pour regrouper l'ensemble de vos recettes et celles que vos amis vous auront passées 😊.</p>
             </div>
             <div className="bottom">
 
-                <form onSubmit={(e) => handleSubmit(e, form)} className="left">
-                {/* <form onSubmit={(e) => !currentModify.length ? handleSubmit(e, form) : setModifyClicked(true)} className="left"> */}
-                  {/* Remplacer les éléments aux bons endroits */}
+                <form  className="left">
                     <InputLabel
                         id="cooking"
                         label="Préparation"
-                        value={!currentModify.length ? form.cookingTitle : recipes[currentModify[0]].modify.cookingTitle}
-                        onChange={(e) => !currentModify.length ? setForm({...form, cookingTitle: e.target.value}) : setRecipes(recipes.map((recipe, index2) => 
-                            index2 === currentModify[0] ? 
-                            {...recipe, 
-                              modify: {...recipe.modify, cookingTitle: e.target.value}
-                            }
-                            :
-                            recipe
-                            
-                            ))}
+                        value={!toModify.length ? form.cookingTitle : recipes[toModify[0]].modify.cookingTitle}
+                        onChange={(e) => !toModify.length ? setForm({...form, cookingTitle: e.target.value}) : dispatch(updateModifyTitle({modify: toModify[0], title: e.target.value}))}
                     />
-                    {!currentModify.length ?
+                    {toModify.length ? <button type="button" onClick={() => dispatch(cancelTitleChange(toModify[0]))}>Annuler</button> : <></>}
+
+                    {!toModify.length ?
                         <>
                             <InputLabel
                                 id="ingredients"
                                 label="Ingrédients"
-                                value={currentIngredient}
-                                onChange={(e) => setCurrentIngredient(e.target.value)}
-                                // onChange={(e) => setForm({...form, ingredients: [...form.ingredients, e.target.value]})}
+                                value={form.currentIngredient}
+                                onChange={(e) => setForm({...form, currentIngredient: e.target.value})}
                             />
-                            <button onClick={() => addIngredient(currentIngredient)} type="button">AddIngredient</button>
+                            <button onClick={() => addIngredient(form.currentIngredient)} type="button">AddIngredient</button>
 
                             <InputLabel
                                 id="step"
                                 label={`Etape ${form.steps.length + 1}`}
-                                value={currentStep}
-                                onChange={(e) => setCurrentStep(e.target.value)}
-                                // onChange={(e) => setForm({...form, steps: [...form.steps, e.target.value]})}
+                                value={form.currentStep}
+                                onChange={(e) => setForm({...form, currentStep: e.target.value})}
                             />
-                            <button onClick={() => addStep(currentStep)} type="button">AddStep</button>
+                            <button onClick={() => addStep(form.currentStep)} type="button">AddStep</button>
 
                         </>
                         :
                         <>
-                        {/* {console.log(recipes[currentModify[0]].modify.ingredients)} */}
-                        {recipes[currentModify[0]].modify.ingredients.map((ingredient,index) => 
-                                <InputModify
-                                    value={ingredient}
-                                    onChange={(e) => setRecipes(recipes.map((recipe, index2) => 
-                                        index2 === currentModify[0] ? 
-                                        {...recipe, 
-                                          modify: {...recipe.modify, ingredients: recipe.modify.ingredients.map((element, index3) => 
-                                            index3 === index ? e.target.value : element)}
-                                        }
-                                        :
-                                        recipe
-                                        
-                                        ))} 
-                                    // onModify={setRecipes(recipes.map((recipe, index2) => {index2 === currentModify ? {...recipe, modify: {...recipe.modify}} : recipe}))}
-                                    onSuppress={() => setRecipes(recipes.map((recipe, index2) => index2 === currentModify[0] ? ({...recipe, modify: {...recipe.modify, ingredients: recipe.modify.ingredients.filter((element, index3) => index3 !== index)}}) : recipe))}
-                                    onStop={() => setRecipes(recipes.map((recipe, index2) => index2 === currentModify[0] ? ({...recipe, modify: {...recipe.modify, ingredients: recipe.modify.ingredients.map((ingredient,index3) => index3 === index ? recipe.recipe.ingredients[index3] : ingredient)}}) : recipe))}
-                                />
-                        )}
+                            {recipes[toModify[0]].modify.ingredients.map((ingredient,index) => 
+                                    <InputModify
+                                        value={ingredient}
+                                        onChange={(e) => dispatch(updateModifyIngredient({modify: toModify[0], ingredient: e.target.value, currentIndex: index}))} 
+                                        onSuppress={() => dispatch(suppressIngredientFromModify({modify: toModify[0], currentIndex: index}))}
+                                        onStop={() => dispatch(cancelIngredientChange({modify: toModify[0], currentIndex: index}))}
+                                    />
+                            )}
 
-                        {recipes[currentModify[0]].modify.steps.map((step,index) =>
-                                  
-                          <InputModify
-                              value={step}
-                              onChange={(e) => setRecipes(recipes.map((recipe, index2) => 
-                                  index2 === currentModify[0] ? 
-                                  {...recipe, 
-                                    modify: {...recipe.modify, steps: recipe.modify.steps.map((element, index3) => 
-                                      index3 === index ? e.target.value : element)}
-                                  }
-                                  :
-                                  recipe
-                                  ))}
-                              // onModify={setRecipes(recipes.map((recipe, index2) => {index2 === currentModify ? {...recipe, recipe: {...recipe.modify}} : recipe}))}
-                              onSuppress={() => setRecipes(recipes.map((recipe, index2) => index2 === currentModify[0] ? ({...recipe, modify: {...recipe.modify, steps: recipe.modify.steps.filter((element, index3) => index3 !== index)}}) : recipe))}
-                              onStop={() => setRecipes(recipes.map((recipe, index2) => index2 === currentModify[0] ? ({...recipe, modify: {...recipe.modify, steps: recipe.modify.steps.map((step,index3) => index3 === index ? recipe.recipe.steps[index3] : step)}}) : recipe))}
-                          />
-                        )}
-                              </>
-                            }
-                        
+                            {recipes[toModify[0]].modify.steps.map((step,index) =>
+                                <InputModify
+                                    value={step}
+                                    onChange={(e) => dispatch(updateModifyStep({modify: toModify[0], step: e.target.value, currentIndex: index}))}                              
+                                    onSuppress={() => dispatch(suppressStepFromModify({modify: toModify[0], currentIndex: index}))}
+                                    onStop={() => dispatch(cancelStepChange({modify: toModify[0], currentIndex: index}))}
+                                />
+                            )}
+                        </>
+                      }                       
                     
                     <ul>{form.ingredients.map((ingredient,index) => <li key={index}>{ingredient}</li>)}</ul>
                     <ul>{form.steps.map((step,index) => <li key={index}>{step}</li>)}</ul>
 
+                    <input type="submit" value={!toModify.length ? "Ajouter une recette" : "Modifier la recette"} onClick={(e) => !toModify.length ? handleSubmit(e, form) : modifyClicked(e, toModify[0])}/>
+                    {toModify.length &&
+                        <input type="submit" value="Annuler la modification" onClick={(e) => cancelModifications(e,toModify[0])}/>
+                    }
 
-                    <input type="submit" value={!currentModify.length ? "Ajouter une recette" : "Modifier la recette"} />
+                    {`${form.cookingTitle} ${form.currentIngredient} ${form.currentStep}`}
 
-                    {/* onClick={(e) => {e.preventDefault();!currentModify.length && setRecipes(recipes.map((recipe, index2) => index2 === currentModify[0] ? ({...recipe, recipe: {...recipe.modify}}) : recipe))}} */}
-
-                    {`${form.cookingTitle} ${currentIngredient} ${currentStep}`}
                 </form>
 
                 {recipes && 
                     <div className="right">
-                        <Recipes 
-                          recipes={recipes}
-                          setRecipeList={setRecipes}
-                          setCurrentModify={setCurrentModify}
-                        />
+                        <Recipes />
                     </div>
                 }
             </div>
