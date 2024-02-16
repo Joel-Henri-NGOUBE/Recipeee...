@@ -1,11 +1,15 @@
 import React from 'react'
+// Import des hooks de redux pour récupérer l'état (useSelector) et modifier l'état (useDispatch)
 import { useDispatch, useSelector } from "react-redux"
+
+// Import de l'ensembles des fonctions d'actions du Reducer
 import { recipeClicked, removeRecipe, changeCurrentModify } from "../State/Reducers/reducers"
 
 export default function Recipe({ thisRecipe, indexOfRecipe }) {
-
+    // Appel de la fonction d'exécution d'actions
     const dispatch = useDispatch()
 
+    // Récupération de la tâche de l'état à modifier  (id)
     const toModify = useSelector((state) => state.currentModify[0])
 
     const { cookingTitle, ingredients, steps } = thisRecipe.recipe
@@ -34,6 +38,7 @@ export default function Recipe({ thisRecipe, indexOfRecipe }) {
             </>
             :
             <>
+                {/* Afficher le détail des ingrédients et des étapes au clic */}
                 <span>Ingrédients: <b>{ingredients.length}</b></span>
                 <ul>
                     {ingredients.map((ingredient,index) => <li key={index}>{ingredient}</li>)}
@@ -44,6 +49,7 @@ export default function Recipe({ thisRecipe, indexOfRecipe }) {
                 </ul>
             </>
         }
+        {/* Boutons de modification et de suppression à afficher si la recette ne subit pas de modification */}
         {toModify !== indexOfRecipe 
         &&  <>
                 <button onClick={(e) => modifyRecipe(e)}>Modifier</button>

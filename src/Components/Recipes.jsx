@@ -4,6 +4,7 @@ import { useSelector } from "react-redux"
 
 
 export default function Recipes() {
+  // Récupération de la liste des recettes
   const recipes = useSelector((state) => state.recipes)
   return (
     <>

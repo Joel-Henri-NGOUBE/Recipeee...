@@ -1,12 +1,16 @@
 import { useState } from 'react';
 import './App.css';
+// Import des hooks de redux pour récupérer l'état (useSelector) et modifier l'état (useDispatch)
 import { useDispatch, useSelector } from "react-redux"
 import InputLabel from './Components/InputLabel';
 import InputModify from './Components/InputModify';
 import Recipes from './Components/Recipes';
-import { addRecipe, updateRecipe, updateModifyIngredient, updateModifyStep, updateModifyTitle, suppressIngredientFromModify, suppressStepFromModify, cancelStepChange, cancelIngredientChange, cancelTitleChange, cleanCurrentModify, updateModifyOfRecipe } from "./State/Reducers/reducers"
+
+// Import de l'ensembles des fonctions d'actions du Reducer
+import { addRecipe, updateRecipe, updateModifyIngredient, updateModifyStep, updateModifyTitle, suppressIngredientFromModify, suppressStepFromModify, cancelStepChange, cancelIngredientChange, cancelTitleChange, cleanCurrentModify, resetModifyOfRecipe } from "./State/Reducers/reducers"
 
 function App() {
+    // 
     const [form, setForm] = useState({
       cookingTitle: "",
       currentIngredient: "",
@@ -15,11 +19,13 @@ function App() {
       steps: []
     })
 
+    // Appel de la fonction d'exécution d'actions
     const dispatch = useDispatch()
 
+    // Récupération de la tâche à modifier de l'état (id)
     const toModify = useSelector((state) => state.currentModify)
-    console.log(toModify)
 
+    // Récupération des recettes de l'état
     const recipes = useSelector((state) => state.recipes)
 
     const addIngredient = (ingredient) => {
@@ -41,7 +47,6 @@ function App() {
             currentStep: "",
             steps: []
           })
-        console.log(form)
     }
 
     const modifyClicked = (e, index) => {
@@ -52,7 +57,7 @@ function App() {
 
     const cancelModifications = (e, index) => {
         e.preventDefault()
-        dispatch(updateModifyOfRecipe(index))
+        dispatch(resetModifyOfRecipe(index))
         dispatch(cleanCurrentModify())
     }
 
@@ -66,6 +71,7 @@ function App() {
             <div className="bottom">
 
                 <form  className="left">
+                    {/* Input pour l'insertion du titire de la préparation */}
                     <InputLabel
                         id="cooking"
                         label="Préparation"
@@ -76,6 +82,8 @@ function App() {
 
                     {!toModify.length ?
                         <>
+                        {/* Inputs par défaut du formlaire pour insérer les ingrédients et les étapes */}
+
                             <InputLabel
                                 id="ingredients"
                                 label="Ingrédients"
@@ -83,7 +91,7 @@ function App() {
                                 onChange={(e) => setForm({...form, currentIngredient: e.target.value})}
                             />
                             <button onClick={() => addIngredient(form.currentIngredient)} type="button">AddIngredient</button>
-
+                            
                             <InputLabel
                                 id="step"
                                 label={`Etape ${form.steps.length + 1}`}
@@ -95,6 +103,9 @@ function App() {
                         </>
                         :
                         <>
+                        {/* Inputs à prendre en considération si l'utilisateur souhaite modifier une recette */}
+                            
+                            {/* Affichage des ingrédients correspondant à la recette à modifier */}
                             {recipes[toModify[0]].modify.ingredients.map((ingredient,index) => 
                                     <InputModify
                                         value={ingredient}
@@ -103,7 +114,7 @@ function App() {
                                         onStop={() => dispatch(cancelIngredientChange({modify: toModify[0], currentIndex: index}))}
                                     />
                             )}
-
+                            {/* Affichage des étapes correspondant à la recette à modifier */}
                             {recipes[toModify[0]].modify.steps.map((step,index) =>
                                 <InputModify
                                     value={step}
@@ -114,19 +125,23 @@ function App() {
                             )}
                         </>
                       }                       
-                    
+                    {/* Affichage des ingrédients liés à la nouvelle recette */}
                     <ul>{form.ingredients.map((ingredient,index) => <li key={index}>{ingredient}</li>)}</ul>
+                    
+                    {/* Affichage des étapes à suivre pr rapport à la nouvelle recette */}
                     <ul>{form.steps.map((step,index) => <li key={index}>{step}</li>)}</ul>
 
                     <input type="submit" value={!toModify.length ? "Ajouter une recette" : "Modifier la recette"} onClick={(e) => !toModify.length ? handleSubmit(e, form) : modifyClicked(e, toModify[0])}/>
-                    {toModify.length &&
-                        <input type="submit" value="Annuler la modification" onClick={(e) => cancelModifications(e,toModify[0])}/>
+                    {toModify.length 
+                        ? <input type="submit" value="Annuler la modification" onClick={(e) => cancelModifications(e,toModify[0])}/>
+                        : <></>
                     }
 
-                    {`${form.cookingTitle} ${form.currentIngredient} ${form.currentStep}`}
+                    {/* {`${form.cookingTitle} ${form.currentIngredient} ${form.currentStep}`} */}
 
                 </form>
 
+                {/* Apparition des recettes lorsque l'état est différent d'un tableau vide */}
                 {recipes && 
                     <div className="right">
                         <Recipes />
