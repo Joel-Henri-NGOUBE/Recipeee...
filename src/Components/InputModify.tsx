@@ -1,6 +1,13 @@
-import React from 'react'
+import { ChangeEvent } from "react"
 
-export default function InputModify({ value, onChange, onStop, onSuppress }) {
+type InputModifyProps = {
+  value: string,
+  onChange: (e: ChangeEvent) => void
+  onStop: () => void
+  onSuppress: () => void
+}
+
+export default function InputModify({ value, onChange, onStop, onSuppress }: InputModifyProps) {
   return (
     <>
         <input type="text" value={value} onChange={onChange}/>

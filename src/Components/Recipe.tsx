@@ -1,16 +1,34 @@
-import React from 'react'
 // Import des hooks de redux pour récupérer l'état (useSelector) et modifier l'état (useDispatch)
 import { useDispatch, useSelector } from "react-redux"
+import { useAppDispatch, useAppSelector } from "../State/Store/hooks"
 
 // Import de l'ensembles des fonctions d'actions du Reducer
 import { recipeClicked, removeRecipe, changeCurrentModify } from "../State/Reducers/reducers"
+import { RootState } from "../State/Store/store"
 
-export default function Recipe({ thisRecipe, indexOfRecipe }) {
+export type PrimaryRecipe = {
+    cookingTitle: string,
+    ingredients: string[],
+    steps: string[]
+}
+
+export type Recipe = {
+    recipe: PrimaryRecipe,
+    clicked: boolean,
+    modify: PrimaryRecipe
+}
+
+type RecipeProps = {
+    thisRecipe: Recipe,
+    indexOfRecipe: number
+}
+
+export default function Recipe({ thisRecipe, indexOfRecipe }: RecipeProps) {
     // Appel de la fonction d'exécution d'actions
-    const dispatch = useDispatch()
+    const dispatch = useAppDispatch()
 
     // Récupération de la tâche de l'état à modifier  (id)
-    const toModify = useSelector((state) => state.currentModify[0])
+    const toModify: number = useAppSelector((state: RootState) => state.currentModify[0])
 
     const { cookingTitle, ingredients, steps } = thisRecipe.recipe
 
@@ -18,12 +36,12 @@ export default function Recipe({ thisRecipe, indexOfRecipe }) {
         dispatch(recipeClicked(indexOfRecipe))
     }
 
-    const suppressRecipe = (e) => {
+    const suppressRecipe = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         dispatch(removeRecipe(indexOfRecipe))
         e.stopPropagation()
     }
 
-    const modifyRecipe = (e) => {
+    const modifyRecipe = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         dispatch(changeCurrentModify(indexOfRecipe))
         e.stopPropagation()
     }
@@ -52,8 +70,8 @@ export default function Recipe({ thisRecipe, indexOfRecipe }) {
         {/* Boutons de modification et de suppression à afficher si la recette ne subit pas de modification */}
         {toModify !== indexOfRecipe 
         &&  <>
-                <button onClick={(e) => modifyRecipe(e)}>Modifier</button>
-                <button onClick={(e) => suppressRecipe(e)}>Supprimer</button>
+                <button onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => modifyRecipe(e)}>Modifier</button>
+                <button onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => suppressRecipe(e)}>Supprimer</button>
             </> 
         }
     </div>
