@@ -1,4 +1,7 @@
 import { ChangeEvent } from "react"
+import Delete from "../Images/remove.svg"
+import Cancel from "../Images/forbidden.svg"
+
 
 type InputModifyProps = {
   value: string,
@@ -9,11 +12,11 @@ type InputModifyProps = {
 
 export default function InputModify({ value, onChange, onStop, onSuppress }: InputModifyProps) {
   return (
-    <>
+    <div className="inputmodify">
         <input type="text" value={value} onChange={onChange}/>
         {/* <button onClick={onModify}>Valider</button> */}
-        <button onClick={onSuppress} type="button">Supprimer</button>
-        <button onClick={onStop} type="button">Annuler</button>
-    </>
+        <img src={Delete} alt="deleter" onClick={onSuppress} width="30" height="30" />
+        <img src={Cancel} alt="canceller" onClick={onStop} width="30" height="30" />
+    </div>
   )
 }

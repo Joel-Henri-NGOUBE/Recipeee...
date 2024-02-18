@@ -34,6 +34,49 @@ interface PayloadParamsWithIndexAndStep {
 const initialState: Recipe[] = []
 // TypeScript doit reconnître de type de l'état donc le précise en créant une constante du bon type (Recipe[] en l'occurence)
 
+
+// Variables de test. initialState3 (à la suite de recipeSample)
+// est à mettre à la place de initialState dans  recipeSlice
+
+
+// const recipeSample: Recipe = {
+//         recipe: {
+//                     cookingTitle: "LE GÂTEAU AU CHOCOLAT",
+//                     ingredients: [
+//                         "1 tablette de chocolat noir",
+//                         "3 oeufs",
+//                         "100 g de farine",
+//                         "100 g de beurre",
+//                         "80 g de sucre",
+//                         "1 sachet de levure chimique"
+//                     ],
+//                     steps: [
+//                         "Préchauffez votre four à 180° C. Faire fondre le chocolat avec le beurre au micro-ondes 2 minutes à 500W.",
+//                         "Dans un saladier, mélangez la farine, les oeufs, le sucre et la levure puis incorporez le chocolat fondu. La pâte doit avoir une consistance onctueuse.",
+//                         "Versez-la dans un moule beurré et fariné. Faites cuire dans votre four durant 25 minutes."
+//                     ]
+//                 },
+//     clicked: true,
+//     modify: {
+//         cookingTitle: "LE GÂTEAU AU CHOCOLAT",
+//         ingredients: [
+//             "1 tablette de chocolat noir",
+//             "3 oeufs",
+//             "100 g de farine",
+//             "100 g de beurre",
+//             "80 g de sucre",
+//             "1 sachet de levure chimique"
+//         ],
+//         steps: [
+//             "Préchauffez votre four à 180° C. Faire fondre le chocolat avec le beurre au micro-ondes 2 minutes à 500W.",
+//             "Dans un saladier, mélangez la farine, les oeufs, le sucre et la levure puis incorporez le chocolat fondu. La pâte doit avoir une consistance onctueuse.",
+//             "Versez-la dans un moule beurré et fariné. Faites cuire dans votre four durant 25 minutes."
+//         ]
+//     }
+// }
+
+// const initialState3: Recipe[] = [recipeSample, recipeSample, recipeSample]
+
 // Slice qui gère l'état de la liste des recettes
 export const recipeSlice: Slice = createSlice({
     name: "recipes",
