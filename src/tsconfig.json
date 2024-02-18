@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "outDir": "src",
+        "target": "ES6",
+        "module": "ES2015",
+        "moduleResolution": "node",
+        "strict": true,
+        "jsx": "react-jsx",
+        "esModuleInterop": true,
+        "allowJs": true,                             
+        "forceConsistentCasingInFileNames": true,             
+        "skipLibCheck": true
+    }
+}
