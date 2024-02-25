@@ -10,5 +10,6 @@
         "allowJs": true,                             
         "forceConsistentCasingInFileNames": true,             
         "skipLibCheck": true
-    }
+    },
+    "include": ["src/Types/index.d.ts"]
 }
