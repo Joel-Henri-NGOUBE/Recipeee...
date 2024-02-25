@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "outDir": "src",
-        "target": "ES6",
+        "target": "ES2020",
         "module": "ES2015",
         "moduleResolution": "node",
         "strict": true,
