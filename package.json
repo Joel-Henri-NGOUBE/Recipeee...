@@ -21,6 +21,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "develop": "npx tsc src/index.tsx --moduleResolution node --jsx preserve -t es2020 --outDir src --module ES2015 --esModuleInterop true --forceConsistentCasingInFileNames true --noEmit false --skipLibCheck true --typeRoots node_modules/@types src/Types/index",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
