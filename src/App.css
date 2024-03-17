@@ -28,9 +28,9 @@ input[type="submit"]{
   border-radius: 15px;
 }
 
-#ingredients{
+/* #ingredients{
   width: 150px;
-}
+} */
 
 input[type="text"]{
   width: 200px;
@@ -40,7 +40,7 @@ input[type="text"]{
   border-radius: 10px;
 }
 
-button, input[type="submit"], img{
+button, input[type="submit"], img, .recipe{
   cursor: pointer;
 }
 
@@ -79,9 +79,24 @@ label{
 
 .left, .right{
   /* width: 50%; */
+  /* overflow-y: scroll; */
   height: 60vh;
   justify-content: flex-start;
 }
+
+::-webkit-scrollbar{
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb{
+  background-color: rgb(249, 204, 151, 0.5);
+  border-radius: 10px;
+}
+
+/* .left ul::-webkit-scrollbar-thumb{
+  background-color: rgba(126, 216, 62, 0.5);
+  border-radius: 10px;
+} */
 
 .inputmodify, .submit, .title{
   flex-direction: row;
@@ -173,6 +188,10 @@ img{
   margin: 5px;
 }
 
+.top > *{
+  text-align: center;
+}
+
 img:first-of-type{
   margin-right: 15px;
 }
@@ -183,9 +202,27 @@ img:first-of-type{
   }
 }
 
+/* :thum */
+
 @media screen and (max-width: 900px){
   .inputs{
     flex-direction: column;
+  }
+  .bottom, .left .inputs{
+    align-items: center;
+  }
+  .right{
+    width: max-content;
+    height: 300px;
+  }
+  .left{
+    box-sizing: border-box;
+    overflow-y: scroll;
+    margin-bottom: 20px;
+  }
+  .App{
+    overflow-y: scroll;
+    width: 100vw;
   }
 }
 
