@@ -197,6 +197,12 @@ img:first-of-type{
 }
 
 @media screen and (max-width: 650px){
+  .right, .left{
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 650px){
   .bottom{
     flex-direction: column;
   }
