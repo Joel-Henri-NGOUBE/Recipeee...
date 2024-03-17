@@ -197,8 +197,15 @@ img:first-of-type{
 }
 
 @media screen and (max-width: 650px){
+  .right{
+    align-items: flex-end;
+  }
   .right, .left{
-    width: 100%;
+    width: 100% !important;
+  }
+
+  .recipe{
+    width: 330px;
   }
 }
 
